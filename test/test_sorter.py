@@ -51,4 +51,16 @@ def test_nonexisting_document_folders():
     unorganized_doc = "taxes.pdf"
     assert determine_document_path(unorganized_doc, "Documents") == "Documents"
 
-    
+
+from src.sorter import prompt_user_action
+
+
+def test_interactive_prompt(monkeypatch):
+    # Simulate a user typing 'm' and pressing Enter
+    monkeypatch.setattr('builtins.input', lambda _: 'm')
+
+    # Run the prompt function for a dummy file
+    choice = prompt_user_action("REC_001.mp4")
+
+    # Assert it correctly captures and returns the 'm' keystroke
+    assert choice == 'm'

@@ -71,3 +71,18 @@ def get_safe_filename(filename):
     """
     base, ext = os.path.splitext(filename)
     return f"{base}_SD_Import{ext}"
+
+
+def prompt_user_action(filename):
+    """
+    Pauses execution to ask the user what to do with a file.
+    Loops until a valid choice is entered.
+    """
+    print(f"\nFile: {filename}")
+    while True:
+        choice = input("[M]ove | [P]review | [S]kip: ").strip().lower()
+
+        if choice in ['m', 'p', 's', '']:
+            return choice
+
+        print("Invalid input. Please enter M, P, or S.")
