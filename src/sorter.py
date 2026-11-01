@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import subprocess
 
 
 def get_creation_date(filepath):
@@ -86,3 +87,10 @@ def prompt_user_action(filename):
             return choice
 
         print("Invalid input. Please enter M, P, or S.")
+
+def preview_file(filepath):
+    """
+    Triggers macOS Quick Look for instant video/photo preview.
+    """
+    # We route stdout and stderr to DEVNULL to keep your terminal clean from qlmanage's verbose logging
+    subprocess.run(['qlmanage', '-p', filepath], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
