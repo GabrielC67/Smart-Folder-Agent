@@ -4,6 +4,7 @@ import os
 from src.sorter import ensure_directory_exists
 from src.sorter import get_category
 from src.sorter import determine_document_path
+from src.sorter import get_safe_filename
 
 def test_extracts_correct_creation_date(tmp_path):
     # 1. Create a temporary dummy file for the test
@@ -49,3 +50,5 @@ def test_existing_document_folders():
 def test_nonexisting_document_folders():
     unorganized_doc = "taxes.pdf"
     assert determine_document_path(unorganized_doc, "Documents") == "Documents"
+
+    

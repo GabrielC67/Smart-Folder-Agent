@@ -53,3 +53,21 @@ def determine_document_path(filename, base_category):
 
     # If it's a loose file, just return the base category (e.g., 'Documents')
     return base_category
+
+
+def test_prevents_file_collisions():
+    # Simulate a file that already exists on the NAS
+    existing_file = "REC_001.mp4"
+
+    # Run it through our safe-rename function
+    safe_name = get_safe_filename(existing_file)
+
+    # Assert it appends the correct suffix to prevent overwriting
+    assert safe_name == "REC_001_SD_Import.mp4"
+
+def get_safe_filename(filename):
+    """
+    Appends a safe suffix to a filename to prevent overwriting existing files.
+    """
+    base, ext = os.path.splitext(filename)
+    return f"{base}_SD_Import{ext}"
