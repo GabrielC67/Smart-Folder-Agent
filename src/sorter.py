@@ -71,8 +71,7 @@ def get_safe_filename(filename):
     Appends a safe suffix to a filename to prevent overwriting existing files.
     """
     base, ext = os.path.splitext(filename)
-    return f"{base}_SD_Import{ext}"
-
+    return f"{base}_Organized{ext}"
 
 def prompt_user_action(filename):
     """

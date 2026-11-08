@@ -55,7 +55,7 @@ def test_prevents_file_collisions():
     safe_name = get_safe_filename(existing_file)
 
     # Assert it appends the correct suffix to prevent overwriting
-    assert safe_name == "REC_001_SD_Import.mp4"
+    assert safe_name == "REC_001_Organized.mp4"
 
 def test_existing_document_folders():
     organized_doc = "Social Security/card_scan.pdf"
