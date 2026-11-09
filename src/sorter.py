@@ -93,3 +93,18 @@ def preview_file(filepath):
     """
     # We route stdout and stderr to DEVNULL to keep your terminal clean from qlmanage's verbose logging
     subprocess.run(['qlmanage', '-p', filepath], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def prompt_user_action_folder(folder_name, folder_date):
+    """
+        Pauses execution when a folder is found and asks the user how to handle it.
+        """
+    print(f"\nFolder found: {folder_name} (Created: {folder_date})")
+    while True:
+        print("What would you like to do?")
+        print("[1] Move entire folder as-is | [2] Move & organize contents by file type | [S]kip")
+        choice = input("Select an option (1, 2, S): ").strip().lower()
+
+        if choice in ['1', '2', 's', '']:
+            return choice
+        print("Invalid input. Please enter 1, 2, or S.")

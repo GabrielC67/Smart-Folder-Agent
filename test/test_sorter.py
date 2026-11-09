@@ -8,6 +8,7 @@ from src.sorter import prompt_user_action
 from src.sorter import get_safe_filename
 import subprocess
 from src.sorter import preview_file
+from src.sorter import prompt_user_action_folder
 
 def test_extracts_correct_creation_date(tmp_path):
     # 1. Create a temporary dummy file for the test
@@ -93,3 +94,13 @@ def test_preview_triggers_macos_system_player(monkeypatch):
     # 4. Assert it actually tried to execute a command on the target file
     assert len(captured_command) == 1
     assert "drone_footage.mp4" in captured_command[0]
+
+def test_folder_action_prompt_returns_valid_choice(monkeypatch):
+    # Simulate the user typing '2' (Move & organize contents) and pressing Enter
+    monkeypatch.setattr('builtins.input', lambda _: '2')
+
+    # Run the prompt function for a dummy folder and date
+    choice = prompt_user_action_folder("Password Manager Export", "2026/10_October")
+
+    # Assert it correctly captures and returns the '2' keystroke
+    assert choice == '2'
