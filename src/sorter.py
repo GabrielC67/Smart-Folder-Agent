@@ -108,3 +108,68 @@ def prompt_user_action_folder(folder_name, folder_date):
         if choice in ['1', '2', 's', '']:
             return choice
         print("Invalid input. Please enter 1, 2, or S.")
+
+
+def get_custom_folder_name():
+    """
+    Prompts the user to enter the name of the folder they want to use or create.
+    """
+    while True:
+        folder_name = input("Enter the target folder name (e.g., 'Password Manager Export'): ").strip()
+        if folder_name:
+            return folder_name
+        print("Folder name cannot be empty.")
+
+
+def get_move_as_is_destination():
+    """
+    Asks the user where to move a folder as-is.
+    """
+    while True:
+        print("\nWhere would you like to move this folder?")
+        print("[A] Existing Folder | [B]New custom folder name | [C] 'Move to Folder Named: Other'")
+        choice = input("Select an option (A, B, or C): ").strip().lower()
+
+        if choice == 'a':
+            return get_folder_name()
+        if choice == 'b':
+            return get_custom_folder_name()
+        elif choice == 'c':
+            return "Other"
+        print("Invalid input. Please enter A, B, or C.")
+
+
+def get_folder_name(pool_path, year, month):
+    """
+    Scans the Year/Month directory and lets the user pick from a list of existing folders.
+    """
+    target_dir = os.path.join(pool_path, year, month)
+
+    # Ensure the directory exists so we don't crash trying to list it
+    if not os.path.exists(target_dir):
+        print(f"\nNo existing folders found in {year}/{month} yet.")
+        print("Falling back to creating a new custom folder.")
+        return get_custom_folder_name()
+
+    # Get a list of all directories inside this Year/Month
+    existing_folders = [f for f in os.listdir(target_dir) if os.path.isdir(os.path.join(target_dir, f))]
+
+    if not existing_folders:
+        print(f"\nNo existing folders found in {year}/{month} yet.")
+        print("Falling back to creating a new custom folder.")
+        return get_custom_folder_name()
+
+    # Display the options
+    print(f"\nExisting folders in {year}/{month}:")
+    for index, folder in enumerate(existing_folders, start=1):
+        print(f"[{index}] {folder}")
+
+    while True:
+        choice = input(f"Select a folder by number (1-{len(existing_folders)}): ").strip()
+
+        if choice.isdigit():
+            index = int(choice)
+            if 1 <= index <= len(existing_folders):
+                return existing_folders[index - 1]
+
+        print(f"Invalid input. Please enter a number between 1 and {len(existing_folders)}.")
