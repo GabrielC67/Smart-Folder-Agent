@@ -171,3 +171,14 @@ def test_get_folder_name_displays_existing_directories(monkeypatch, tmp_path, ca
     # Assert it correctly returned the selected folder
     assert selected in ["Social Security", "Work related", "Court information"]
 
+
+def test_get_custom_folder_name_returns_input(monkeypatch):
+    # Simulate the user typing 'New Tax Folder' and pressing Enter
+    monkeypatch.setattr('builtins.input', lambda _: 'New Tax Folder')
+
+    # Run the function
+    from src.sorter import get_custom_folder_name
+    folder_name = get_custom_folder_name()
+
+    # Assert it correctly returns what the user typed
+    assert folder_name == "New Tax Folder"
