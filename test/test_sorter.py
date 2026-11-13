@@ -37,12 +37,14 @@ def test_identifies_correct_media_categories():
     assert get_category("dashcam.MOV") == "Videos"
 
     # Test picture routing
-    assert get_category("vacation.jpg") == "Pictures"
-    assert get_category("screenshot.PNG") == "Pictures"
+    assert get_category("vacation.jpg") == "Photos"
+    assert get_category("screenshot.PNG") == "Photos"
 
     # Test document routing
     assert get_category("taxes.pdf") == "Documents"
     assert get_category("notes.docx") == "Documents"
+    assert get_category("spreadsheet.xlsx") == "Documents"
+    assert get_category("archive.zip") == "Etc."
 
 
 def test_prevents_file_collisions():
@@ -182,3 +184,37 @@ def test_get_custom_folder_name_returns_input(monkeypatch):
 
     # Assert it correctly returns what the user typed
     assert folder_name == "New Tax Folder"
+
+
+def test_get_folder_name_options(monkeypatch, tmp_path, capsys):
+    # Set up a dummy NAS MainPool directory structure
+    pool = tmp_path / "MainPool"
+    year_month = pool / "2026" / "10_October"
+
+    # Create some dummy folders inside that Year/Month to populate the list
+    (year_month / "Folder 1").mkdir(parents=True)
+    (year_month / "Folder 2").mkdir()
+    (year_month / "Folder 3").mkdir()
+    (year_month / "Named Folder").mkdir()
+    (year_month / "This folder").mkdir()
+    (year_month / "That folder").mkdir()
+    (year_month / "Other").mkdir()
+
+    # Simulate the user selecting option '4' from the list
+    monkeypatch.setattr('builtins.input', lambda _: '4')
+
+    # Run the function passing our dummy paths
+    selected = get_folder_name(str(pool), "2026", "10_October")
+
+    # Capture the terminal output to verify the numbered list was displayed
+    captured = capsys.readouterr()
+
+    # Assertions
+    assert "Pick the folder that you want to move the file/folder to in 2026/10_October:" in captured.out
+    assert "[1]" in captured.out
+    assert "[4]" in captured.out
+    assert "[8] Cancel and move back to the previous question." in captured.out
+    assert "[9] New folder" in captured.out
+
+    # Assert it correctly returned the selected folder
+    assert selected in ["Folder 1", "Folder 2", "Folder 3", "Named Folder", "This folder", "That folder", "Other"]

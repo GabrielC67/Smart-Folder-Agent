@@ -32,14 +32,24 @@ def get_category(filename):
     _, ext = os.path.splitext(filename)
     ext = ext.lower()
 
-    if ext in ['.jpg', '.jpeg', '.png', '.gif', '.heic']:
-        return "Pictures"
-    elif ext in ['.mp4', '.mov', '.avi', '.mkv']:
-        return "Videos"
-    elif ext in ['.pdf', '.doc', '.docx', '.txt']:
-        return "Documents"
+    categories = {
+        ".jpg": "Photos",
+        ".jpeg": "Photos",
+        ".png": "Photos",
+        ".gif": "Photos",
+        ".heic": "Photos",
+        ".mp4": "Videos",
+        ".mov": "Videos",
+        ".avi": "Videos",
+        ".mkv": "Videos",
+        ".pdf": "Documents",
+        ".doc": "Documents",
+        ".docx": "Documents",
+        ".xlsx": "Documents",
+        ".txt": "Documents",
+    }
 
-    return "Unknown"
+    return categories.get(ext, "Etc.")
 
 
 def determine_document_path(filename, base_category):
