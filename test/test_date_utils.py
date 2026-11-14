@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from src.date_utils import format_date_folder
+from src.date_utils import format_date_folder, parse_custom_date
 
 
 @pytest.mark.parametrize(
@@ -27,3 +27,7 @@ def test_formats_date_folder_with_ordinal_day(day, expected):
 
 def test_formats_another_month():
     assert format_date_folder(date(2026, 2, 1)) == "February 1st, 2026"
+
+
+def test_parse_custom_date_accepts_valid_date():
+    assert parse_custom_date("10-07-2026") == date(2026, 10, 7)
