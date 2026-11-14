@@ -38,6 +38,11 @@ def main():
             # 3. Preserve Document Sub-Folders
             if category == "Documents":
                 rel_path = os.path.relpath(filepath, pool_path)
+
+                path_parts = rel_path.split(os.sep)
+                if path_parts[:3] == [year, month, "Documents"]:
+                    continue
+
                 category_path = determine_document_path(rel_path, "Documents")
             else:
                 category_path = category

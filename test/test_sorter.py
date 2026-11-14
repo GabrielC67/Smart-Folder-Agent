@@ -66,6 +66,32 @@ def test_nonexisting_document_folders():
     assert determine_document_path(unorganized_doc, "Documents") == "Documents"
 
 
+def test_already_organized_document_is_not_prompted(monkeypatch, tmp_path):
+    import src.main as main_module
+
+    pool = tmp_path / "MainPool"
+    document = pool / "2026" / "10_October" / "Documents" / "Taxes" / "receipt.pdf"
+    document.parent.mkdir(parents=True)
+    document.write_text("receipt")
+
+    prompts = []
+
+    def record_prompt(filename):
+        prompts.append(filename)
+        return "s"
+
+    monkeypatch.setattr("builtins.input", lambda _: str(pool))
+    monkeypatch.setattr(
+        main_module, "get_creation_date", lambda _: datetime(2026, 10, 1)
+    )
+    monkeypatch.setattr(main_module, "prompt_user_action", record_prompt)
+
+    main_module.main()
+
+    assert prompts == []
+    assert document.read_text() == "receipt"
+
+
 def test_interactive_prompt(monkeypatch):
     # Simulate a user typing 'm' and pressing Enter
     monkeypatch.setattr('builtins.input', lambda _: 'm')
