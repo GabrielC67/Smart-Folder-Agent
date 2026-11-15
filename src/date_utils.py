@@ -1,5 +1,7 @@
-from datetime import date
+import os
 import re
+from datetime import date, datetime
+from typing import Optional
 
 MONTH_NAMES = (
     "January", "February", "March", "April", "May", "June",
@@ -33,3 +35,19 @@ def parse_custom_date(value: str) -> date:
         year_number += 2000 if year_number <= 68 else 1900
 
     return date(year_number, int(month), int(day))
+
+
+def get_file_dates(filepath: str) -> tuple[Optional[date], date]:
+    stat = os.stat(filepath)
+
+    creation_timestamp = getattr(stat, "st_birthtime", None)
+    if creation_timestamp is None and os.name == "nt":
+        creation_timestamp = stat.st_ctime
+
+    creation_date = (
+        datetime.fromtimestamp(creation_timestamp).date()
+        if creation_timestamp is not None
+        else None
+    )
+    modification_date = datetime.fromtimestamp(stat.st_mtime).date()
+    return creation_date, modification_date

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 import pytest
 
@@ -36,3 +36,58 @@ def test_parse_custom_date_accepts_valid_date():
 def test_parse_custom_date_rejects_nonexistent_date():
     with pytest.raises(ValueError):
         parse_custom_date("02-30-2026")
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("10-07-2026", date(2026, 10, 7)),
+        ("10/07/2026", date(2026, 10, 7)),
+        ("10.07.26", date(2026, 10, 7)),
+        ("100726", date(2026, 10, 7)),
+        ("1 7 26", date(2026, 1, 7)),
+        ("10/07-2026", date(2026, 10, 7)),
+        (" 10-07-2026 ", date(2026, 10, 7)),
+        ("10-07-68", date(2068, 10, 7)),
+        ("10-07-69", date(1969, 10, 7)),
+    ],
+)
+def test_parse_custom_date_accepts_flexible_formats(value, expected):
+    assert parse_custom_date(value) == expected
+
+
+def test_get_file_dates_returns_creation_and_modification_separately(monkeypatch):
+    import src.date_utils as date_utils
+    from types import SimpleNamespace
+
+    creation_time = datetime(2026, 10, 7, 12).timestamp()
+    modification_time = datetime(2026, 10, 9, 12).timestamp()
+    stat_result = SimpleNamespace(
+        st_birthtime=creation_time,
+        st_ctime=creation_time,
+        st_mtime=modification_time,
+    )
+    monkeypatch.setattr(date_utils.os, "stat", lambda _: stat_result)
+
+    assert date_utils.get_file_dates("sample.pdf") == (
+        date(2026, 10, 7),
+        date(2026, 10, 9),
+    )
+
+
+def test_get_file_dates_returns_none_when_creation_date_unavailable(monkeypatch):
+    import os
+    import src.date_utils as date_utils
+    from types import SimpleNamespace
+
+    if os.name == "nt":
+        pytest.skip("Windows reports st_ctime as the creation time.")
+
+    modification_time = datetime(2026, 10, 9, 12).timestamp()
+    stat_result = SimpleNamespace(st_mtime=modification_time)
+    monkeypatch.setattr(date_utils.os, "stat", lambda _: stat_result)
+
+    assert date_utils.get_file_dates("sample.pdf") == (
+        None,
+        date(2026, 10, 9),
+    )
