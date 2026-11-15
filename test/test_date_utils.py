@@ -31,3 +31,8 @@ def test_formats_another_month():
 
 def test_parse_custom_date_accepts_valid_date():
     assert parse_custom_date("10-07-2026") == date(2026, 10, 7)
+
+
+def test_parse_custom_date_rejects_nonexistent_date():
+    with pytest.raises(ValueError):
+        parse_custom_date("02-30-2026")

@@ -1,4 +1,5 @@
 from datetime import date
+import re
 
 MONTH_NAMES = (
     "January", "February", "March", "April", "May", "June",
@@ -16,12 +17,19 @@ def format_date_folder(value: date) -> str:
 
 
 def parse_custom_date(value: str) -> date:
-    if len(value) != 10 or value[2] != "-" or value[5] != "-":
-        raise ValueError("Enter a date in MM-DD-YYYY format.")
+    value = value.strip()
+    match = re.fullmatch(r"([0-9]{2})([0-9]{2})([0-9]{4}|[0-9]{2})", value)
+    if match is None:
+        match = re.fullmatch(
+            r"([0-9]{1,2})[./ -]+([0-9]{1,2})[./ -]+([0-9]{4}|[0-9]{2})",
+            value,
+        )
+    if match is None:
+        raise ValueError("Enter a date in month-day-year order.")
 
-    month, day, year = value.split("-")
-    if not (month.isascii() and day.isascii() and year.isascii()
-            and month.isdigit() and day.isdigit() and year.isdigit()):
-        raise ValueError("Enter a date in MM-DD-YYYY format.")
+    month, day, year = match.groups()
+    year_number = int(year)
+    if len(year) == 2:
+        year_number += 2000 if year_number <= 68 else 1900
 
-    return date(int(year), int(month), int(day))
+    return date(year_number, int(month), int(day))
